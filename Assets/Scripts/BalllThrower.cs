@@ -35,20 +35,25 @@ public class BallThower : MonoBehaviour
     }
 
     void ResetBall()
-    {
-        angle = Vector3.zero;
-        endPos = Vector2.zero;
-        startPos = Vector2.zero;
-        BallSpeed = 0;
-        startTime = 0;
-        endTime = 0;
-        swipeDistance = 0;
-        swipeTime = 0;
-        thrown = holding = false;
-        rb.linearVelocity = Vector3.zero;
-        rb.useGravity = false;
-        Ball.transform.position = transform.position;
-    }
+{
+    angle = Vector3.zero;
+    endPos = Vector2.zero;
+    startPos = Vector2.zero;
+    BallSpeed = 0;
+    startTime = 0;
+    endTime = 0;
+    swipeDistance = 0;
+    swipeTime = 0;
+    thrown = holding = false;
+
+    rb.linearVelocity = Vector3.zero;
+    rb.angularVelocity = Vector3.zero;
+    rb.useGravity = false;
+
+    Ball.transform.position = transform.position;
+    Ball.transform.rotation = Quaternion.identity;
+}
+
 
     void PickupBall()
     {
@@ -113,7 +118,7 @@ public class BallThower : MonoBehaviour
         if(swipeTime > 0)
         BallVelocity = swipeDistance / (swipeDistance - swipeTime);
 
-        BallSpeed = BallVelocity * 30;
+        BallSpeed = BallVelocity * 10;
 
         if(BallSpeed <= MaxBallSpeed)
         {
