@@ -93,7 +93,7 @@ public class BallThower : MonoBehaviour
             swipeDistance = (endPos - startPos).magnitude;
             swipeTime = endTime - startTime;
 
-            if (swipeTime < 0.5f && swipeDistance > 30f)
+            if (swipeTime < 10f && swipeDistance > 30f)
             {
                 CalSpeed();
                 CalAngle();
