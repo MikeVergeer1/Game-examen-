@@ -7,6 +7,6 @@ public class UpdateUI : MonoBehaviour
 
     void Update()
     {
-        scoreText.text =  ScoreTrigger.score.ToString() + " :erocS ";
+        scoreText.text =  Score.score.ToString() + " :erocS ";
     }
 }
