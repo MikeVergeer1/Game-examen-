@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Score : MonoBehaviour
 {
-    public static int score = 0;
+    public static int score = 1;
     private bool canScore = true;
 
     void OnTriggerEnter(Collider other)
@@ -19,7 +19,6 @@ public class Score : MonoBehaviour
         canScore = false;
 
         score++;
-        Debug.Log("Scored! New score: " + score);
         Levels.Instance.OnScoreChanged(score);
 
         yield return new WaitForSeconds(2f); 

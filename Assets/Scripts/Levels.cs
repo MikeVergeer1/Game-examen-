@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using UnityEngine.UIElements;
-
 
 public class Levels : MonoBehaviour
 {
@@ -21,9 +19,6 @@ public class Levels : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
-        if (rocketObstacle != null)
-            rocketObstacle.SetActive(false);
     }
 
     public void OnScoreChanged(int score)
@@ -34,65 +29,68 @@ public class Levels : MonoBehaviour
         StartCoroutine(HandleLevelChange(score));
     }
 
-    private System.Collections.IEnumerator HandleLevelChange(int score)
+    private IEnumerator HandleLevelChange(int score)
     {
+        float rocketHeight = 2 + (score * 2f);
+        float fastSpeed = score * 1f; 
+
+        if (rocketObstacle != null)
+            StartCoroutine(FlyRocketUpwardAndDown(rocketObstacle.transform, rocketHeight, fastSpeed));
+
         yield return new WaitForSeconds(1f);
 
-        if (score == 1)
+        if (score == 2 && basketTransform != null)
         {
-            if (basketTransform != null)
-            {
-                Vector3 pos = basketTransform.position;
-                pos.z -= 2f;
-                basketTransform.position = pos;
-            }
+            Vector3 pos = basketTransform.position;
+            pos.z -= 2f;
+            basketTransform.position = pos;
         }
-        else if (score == 2)
+        else if (score == 3 && basketTransform != null)
         {
-            if (basketTransform != null)
-            {
-                Vector3 pos = basketTransform.position;
-                pos.z += 2f;
-                pos.x -= 5f;
-                basketTransform.Rotate(0f, 20f, 0f);
-                basketTransform.position = pos;
-            }
+            Vector3 pos = basketTransform.position;
+            pos.z += 2f;
+            pos.x -= 5f;
+            basketTransform.Rotate(0f, 20f, 0f);
+            basketTransform.position = pos;
         }
-        else if (score == 3)
+        else if (score == 4 && basketTransform != null)
         {
-            if (basketTransform != null)
-            {
-                Vector3 pos = basketTransform.position;
-                pos.z -= 2f;
-                pos.x += 5f;
-                basketTransform.Rotate(0f, -20f, 0f);
-                basketTransform.position = pos;
-            }
-            if (rocketObstacle != null)
-            {
-                rocketObstacle.SetActive(true);
-                rocketObstacle.transform.position = new Vector3(-3f, rocketObstacle.transform.position.y, rocketObstacle.transform.position.z);
-                StartCoroutine(MoveRocket(rocketObstacle.transform));
-            }
+            Vector3 pos = basketTransform.position;
+            pos.z -= 2f;
+            pos.x += 5f;
+            basketTransform.Rotate(0f, -20f, 0f);
+            basketTransform.position = pos;
         }
-
-        IEnumerator MoveRocket(Transform rocketTransform)
-        {
-            float duration = 2f;
-            Vector3 startPos = new Vector3(-3f, rocketTransform.position.y, rocketTransform.position.z);
-            Vector3 endPos = new Vector3(2f, rocketTransform.position.y, rocketTransform.position.z);
-
-            while (true)
-            {
-                float t = Mathf.PingPong(Time.time / duration, 1f);
-                rocketTransform.position = Vector3.Lerp(startPos, endPos, t);
-                yield return null;
-            }
-        }
-
-
-
-        // Meer leverls hier toevoegen
     }
 
+    private IEnumerator FlyRocketUpwardAndDown(Transform rocketTransform, float targetHeight, float fastSpeed)
+    {
+        float slowSpeed = 3f;
+
+        // Fly upward quickly until reaching the target height
+        while (rocketTransform.position.y < targetHeight)
+        {
+            rocketTransform.position += Vector3.up * fastSpeed * Time.deltaTime;
+            yield return null;
+        }
+
+        // Clamp exactly at targetHeight
+        Vector3 pos = rocketTransform.position;
+        pos.y = targetHeight;
+        rocketTransform.position = pos;
+
+        // Slowly return to y = 3
+        while (rocketTransform.position.y > 3f)
+        {
+            rocketTransform.position -= Vector3.up * slowSpeed * Time.deltaTime;
+            if (rocketTransform.position.y < 3f)
+            {
+                pos = rocketTransform.position;
+                pos.y = 3f;
+                rocketTransform.position = pos;
+                break;
+            }
+            yield return null;
+        }
+    }
 }
