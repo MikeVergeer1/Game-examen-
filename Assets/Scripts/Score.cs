@@ -6,6 +6,13 @@ public class Score : MonoBehaviour
     public static int score = 1;
     private bool canScore = true;
 
+    private BallThower ballThower;
+
+    void Start()
+    {
+        ballThower = FindObjectOfType<BallThower>();
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && canScore)
@@ -17,11 +24,12 @@ public class Score : MonoBehaviour
     private IEnumerator ScoreCooldown()
     {
         canScore = false;
-
         score++;
-        Levels.Instance.OnScoreChanged(score);
 
-        yield return new WaitForSeconds(2f); 
+        ballThower?.OnScored();                 // prevent life loss
+        Levels.Instance?.OnScoreChanged(score); // if you’re using Levels.cs
+
+        yield return new WaitForSeconds(2f);
         canScore = true;
     }
 }

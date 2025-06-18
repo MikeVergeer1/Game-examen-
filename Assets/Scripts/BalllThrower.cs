@@ -2,70 +2,32 @@ using UnityEngine;
 
 public class BallThower : MonoBehaviour
 {
-    private GameObject Ball;
+    public float MaxBallSpeed = 30f;
+    public float MinSwipeDistance = 30f;
+    public float PickupSmooth = 80f;
+    public float resetDelay = 2f;
 
-    float startTime, endTime, swipeDistance, swipeTime;
-    private Vector2 startPos;
-    private Vector2 endPos;
+    private Rigidbody rb;
+    private Vector2 startPos, endPos;
+    private float startTime, endTime, swipeDistance, swipeTime;
+    private Vector3 launchAngle;
+    private float BallSpeed;
+    private bool holding, thrown;
 
-    public float MinSwipDist = 0;
-    private float BallVelocity = 0;
-    private float BallSpeed = 0;
-    public float MaxBallSpeed = 30;
-    private Vector3 angle;
+    private Vector3 initialPosition;
+    private Quaternion initialRotation;
 
-    private bool thrown, holding;
-    private Vector3 newPosition;
-    Rigidbody rb;
-
-    public float smooth = 0.7f;
-
-    // Start is called before the first frame update
     void Start()
     {
-        setupBall();
-    }
-
-    void setupBall()
-    {
-        GameObject _ball = GameObject.FindGameObjectWithTag("Player");
-        Ball = _ball;
-        rb = Ball.GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
+        initialPosition = transform.position;
+        initialRotation = transform.rotation;
         ResetBall();
     }
 
-    void ResetBall()
-{
-    angle = Vector3.zero;
-    endPos = Vector2.zero;
-    startPos = Vector2.zero;
-    BallSpeed = 0;
-    startTime = 0;
-    endTime = 0;
-    swipeDistance = 0;
-    swipeTime = 0;
-    thrown = holding = false;
-
-    rb.linearVelocity = Vector3.zero;
-    rb.angularVelocity = Vector3.zero;
-    rb.useGravity = false;
-
-    Ball.transform.position = transform.position;
-    Ball.transform.rotation = Quaternion.identity;
-}
-
-
-    void PickupBall()
+    void Update()
     {
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = Camera.main.nearClipPlane * 5f;
-        newPosition = Camera.main.ScreenToWorldPoint(mousePos);
-        Ball.transform.localPosition = Vector3.Lerp(Ball.transform.localPosition, newPosition, 80f * Time.deltaTime);
-    }
-
-    private void Update()
-    {
-        if(holding)
+        if (holding)
             PickupBall();
 
         if (thrown)
@@ -74,56 +36,97 @@ public class BallThower : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit _hit;
-
-            if(Physics.Raycast(ray, out _hit, 100f))
+            if (Physics.Raycast(ray, out RaycastHit hit, 100f)
+                && hit.transform == transform)
             {
-                if(_hit.transform == Ball.transform)
-                {
-                    startTime = Time.time;
-                    startPos = Input.mousePosition;
-                    holding = true;
-                }
+                holding = true;
+                startTime = Time.time;
+                startPos = Input.mousePosition;
             }
         }
-        else if (Input.GetMouseButtonUp(0))
+        else if (Input.GetMouseButtonUp(0) && holding)
         {
+            holding = false;
             endTime = Time.time;
             endPos = Input.mousePosition;
             swipeDistance = (endPos - startPos).magnitude;
             swipeTime = endTime - startTime;
 
-            if (swipeTime < 10f && swipeDistance > 30f)
+            if (swipeTime > 0f && swipeTime < 10f && swipeDistance > MinSwipeDistance)
             {
-                CalSpeed();
-                CalAngle();
-                rb.AddForce(new Vector3((angle.x * BallSpeed * 5), (angle.y * BallSpeed * 3 ), (angle.z * BallSpeed)));
+                CalculateSpeed();
+                CalculateAngle();
+
+                rb.AddForce(new Vector3(
+                    launchAngle.x * BallSpeed * 5f,
+                    launchAngle.y * BallSpeed * 3f,
+                    launchAngle.z * BallSpeed
+                ));
                 rb.useGravity = true;
-                holding = false;
                 thrown = true;
-                Invoke("ResetBall", 4f);
             }
             else
+            {
                 ResetBall();
+            }
         }
     }
 
-    private void CalAngle()
+    private void PickupBall()
     {
-        angle = Camera.main.ScreenToWorldPoint(new Vector3(endPos.x, endPos.y + 50f, (Camera.main.nearClipPlane + 5)));
+        Vector3 mp = Input.mousePosition;
+        mp.z = Camera.main.nearClipPlane * 5f;
+        Vector3 worldPoint = Camera.main.ScreenToWorldPoint(mp);
+        transform.position = Vector3.Lerp(
+            transform.position,
+            worldPoint,
+            PickupSmooth * Time.deltaTime
+        );
     }
 
-    void CalSpeed()
+    private void CalculateSpeed()
     {
-        if(swipeTime > 0)
-        BallVelocity = swipeDistance / (swipeDistance - swipeTime);
+        BallSpeed = (swipeDistance / swipeTime) * 10f;
+        BallSpeed = Mathf.Min(BallSpeed, MaxBallSpeed);
+    }
 
-        BallSpeed = BallVelocity * 10;
+    private void CalculateAngle()
+    {
+        Vector3 screenPoint = new Vector3(endPos.x, endPos.y + 50f, Camera.main.nearClipPlane + 5f);
+        launchAngle = Camera.main.ScreenToWorldPoint(screenPoint);
+    }
 
-        if(BallSpeed <= MaxBallSpeed)
+    public void OnScored()
+    {
+        thrown = false;
+        Invoke(nameof(ResetBall), resetDelay);
+    }
+
+    public void ResetBall()
+    {
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        rb.useGravity = false;
+
+        transform.position = initialPosition;
+        transform.rotation = initialRotation;
+
+        startPos = endPos = Vector2.zero;
+        startTime = endTime = swipeDistance = swipeTime = 0f;
+        launchAngle = Vector3.zero;
+        holding = thrown = false;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (!thrown) return;
+
+        Debug.Log($"Ball collided with: {collision.collider.tag}");
+        if (collision.collider.CompareTag("Floor"))
         {
-            BallSpeed = MaxBallSpeed;
+            LifeManager.Instance?.LoseLife();
+            thrown = false;
+            Invoke(nameof(ResetBall), resetDelay);
         }
-        swipeTime = 0;
     }
 }
