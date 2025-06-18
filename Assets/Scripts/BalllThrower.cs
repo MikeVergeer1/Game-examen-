@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BallThower : MonoBehaviour
 {
-    public float MaxBallSpeed = 30f;
+    public float MaxBallSpeed = 40;
     public float MinSwipeDistance = 30f;
     public float PickupSmooth = 80f;
     public float resetDelay = 2f;
