@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
+// MovementManager.cs
+// This script manages the movement of various game objects, including a rocket, Saturn, a UFO, a basket, and clouds.
 public class MovementManager : MonoBehaviour
 {
     public static MovementManager Instance;
@@ -107,7 +109,7 @@ public class MovementManager : MonoBehaviour
         Vector3 direction = axis.normalized;
 
         float minOffset = oneSided ? -range : -range;
-        float maxOffset = oneSided ? 0f      :  range;
+        float maxOffset = oneSided ? 0f : range;
 
         while (loop || obj.gameObject.activeSelf)
         {

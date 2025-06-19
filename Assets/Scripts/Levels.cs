@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
+//levels.cs
+// This script manages the game levels and handles the progression based on the player's score.
 public class Levels : MonoBehaviour
 {
     public static Levels Instance;
