@@ -121,7 +121,6 @@ public class BallThower : MonoBehaviour
     {
         if (!thrown) return;
 
-        Debug.Log($"Ball collided with: {collision.collider.tag}");
         if (collision.collider.CompareTag("Floor"))
         {
             LifeManager.Instance?.LoseLife();
