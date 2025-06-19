@@ -37,7 +37,7 @@ public class LifeManager : MonoBehaviour
 
         if (currentLives <= 0)
         {
-            SceneManager.LoadScene("Mian Menu");
+            SceneManager.LoadScene("Main Menu");
         }
     }
 
