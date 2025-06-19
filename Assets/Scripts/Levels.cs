@@ -5,16 +5,8 @@ public class Levels : MonoBehaviour
 {
     public static Levels Instance;
 
-    public GameObject rocketObstacle;
-
     public GameObject saturnObstacle;
-    public float saturnMoveSpeed = 2f;
-    public float saturnMoveRange = 5f;
-
     public GameObject ufoObstacle;
-
-    public Transform basketTransform;
-
 
     private int lastScore = -1;
 
@@ -33,135 +25,67 @@ public class Levels : MonoBehaviour
     {
         if (score == lastScore) return;
         lastScore = score;
-
-        StartCoroutine(HandleLevelChange(score));
+        StartCoroutine(HandleLevel(score));
     }
 
-    private IEnumerator HandleLevelChange(int score)
+    IEnumerator HandleLevel(int score)
     {
-        float rocketHeight = 2 + (score * 2f);
-        float fastSpeed = score * 1f;
+        float h = 2 + score * 2f;
+        float s = score * 1f;
 
-        if (rocketObstacle != null)
-            StartCoroutine(FlyRocketUpwardAndDown(rocketObstacle.transform, rocketHeight, fastSpeed));
+        if (score >= 1)
+            MovementManager.Instance.LaunchRocket(h, s);
 
         yield return new WaitForSeconds(2f);
 
-        if (score == 2 && basketTransform != null)
+        if (score == 2)
         {
-            Vector3 pos = basketTransform.position;
-            pos.z -= 2f;
-            basketTransform.position = pos;
-            LifeManager.Instance.SetLives(3);
+            MovementManager.Instance.SetBasketOffset(new Vector3(0f, 0f, -2f));
+            LifeManager.Instance.SetLives(30);
         }
-        else if (score == 3 && basketTransform != null)
+        else if (score == 3)
         {
-            Vector3 pos = basketTransform.position;
-            pos.z += 2f;
-            pos.x -= 5f;
-            basketTransform.Rotate(0f, 20f, 0f);
-            basketTransform.position = pos;
-            LifeManager.Instance.SetLives(4);
+            MovementManager.Instance.SetBasketOffset(new Vector3(-5f, 0f, 2f), 20f);
+            LifeManager.Instance.SetLives(40);
         }
-        else if (score == 4 && basketTransform != null)
+        else if (score == 4)
         {
-            Vector3 pos = basketTransform.position;
-            pos.z -= 2f;
-            pos.x += 5f;
-            basketTransform.Rotate(0f, -20f, 0f);
-            basketTransform.position = pos;
-
+            MovementManager.Instance.SetBasketOffset(new Vector3(0f, 0f, 0f), 0f);
             saturnObstacle.SetActive(true);
-            saturnMoveRange = 2f;
-            StartCoroutine(MoveSaturnLeftRight(saturnObstacle.transform, saturnMoveRange, saturnMoveSpeed));
-
-            LifeManager.Instance.SetLives(3);
+            MovementManager.Instance.StartSaturn(2f, 2f);
+            LifeManager.Instance.SetLives(30);
         }
         else if (score == 5)
         {
             saturnObstacle.SetActive(false);
             ufoObstacle.SetActive(true);
-            StartCoroutine(MoveUfoUpAndDown(ufoObstacle.transform, saturnMoveRange, saturnMoveSpeed));
-            LifeManager.Instance.SetLives(3);
+            MovementManager.Instance.StartUfo(2f, 2f);
+            LifeManager.Instance.SetLives(30);
         }
-    }
-
-    private IEnumerator FlyRocketUpwardAndDown(Transform rocketTransform, float targetHeight, float fastSpeed)
-    {
-        float slowSpeed = 3f;
-
-        while (rocketTransform.position.y < targetHeight)
+        else if (score == 6)
         {
-            rocketTransform.position += Vector3.up * fastSpeed * Time.deltaTime;
-            yield return null;
+            ufoObstacle.SetActive(false);
+            MovementManager.Instance.StartBasketBackOnly(8f, 2f);
         }
-
-        Vector3 pos = rocketTransform.position;
-        pos.y = targetHeight;
-        rocketTransform.position = pos;
-
-        while (rocketTransform.position.y > 3f)
+        else if (score == 7)
         {
-            rocketTransform.position -= Vector3.up * slowSpeed * Time.deltaTime;
-            if (rocketTransform.position.y < 3f)
-            {
-                pos = rocketTransform.position;
-                pos.y = 3f;
-                rocketTransform.position = pos;
-                break;
-            }
-            yield return null;
+            MovementManager.Instance.StopBasket();
+            MovementManager.Instance.StartBasket(Vector3.up, 1f, 2f);  // Use 1f instead of 2f for less height
+
         }
-    }
-
-    private IEnumerator MoveSaturnLeftRight(Transform saturn, float range, float speed)
-    {
-        Vector3 startPos = saturn.position;
-        bool movingRight = true;
-
-        while (saturn.gameObject.activeSelf)
+        else if (score == 8)
         {
-            float step = speed * Time.deltaTime;
-
-            if (movingRight)
-            {
-                saturn.position += Vector3.right * step;
-                if (saturn.position.x >= startPos.x + range)
-                    movingRight = false;
-            }
-            else
-            {
-                saturn.position -= Vector3.right * step;
-                if (saturn.position.x <= startPos.x - range)
-                    movingRight = true;
-            }
-
-            yield return null;
+            MovementManager.Instance.StartBasket(Vector3.right, 3f, 2f);
         }
-    }
-    private IEnumerator MoveUfoUpAndDown(Transform ufoTransform, float range, float speed)
-    {
-        Vector3 startPos = ufoTransform.position;
-        bool movingUp = true;
-
-        while (ufoTransform.gameObject.activeSelf)
+        else if (score == 9)
         {
-            float step = speed * Time.deltaTime;
-
-            if (movingUp)
-            {
-                ufoTransform.position += Vector3.up * step;
-                if (ufoTransform.position.y >= startPos.y + range)
-                    movingUp = false;
-            }
-            else
-            {
-                ufoTransform.position -= Vector3.up * step;
-                if (ufoTransform.position.y <= startPos.y - range)
-                    movingUp = true;
-            }
-
-            yield return null;
+            MovementManager.Instance.StopBasket();
+            MovementManager.Instance.SetBasketOffset(new Vector3(0f, 0f, -3f), 180f);
+            LifeManager.Instance.SetLives(30);
+        }
+        else if (score == 10)
+        {
+            MovementManager.Instance.StartClouds(6f);
         }
     }
 }
