@@ -53,7 +53,7 @@ public class Levels : MonoBehaviour
             pos.x -= 5f;
             basketTransform.Rotate(0f, 20f, 0f);
             basketTransform.position = pos;
-            LifeManager.Instance.SetLives(5);
+            LifeManager.Instance.SetLives(4);
         }
         else if (score == 4 && basketTransform != null)
         {
@@ -62,7 +62,9 @@ public class Levels : MonoBehaviour
             pos.x += 5f;
             basketTransform.Rotate(0f, -20f, 0f);
             basketTransform.position = pos;
-            LifeManager.Instance.SetLives(2);
+
+            
+            LifeManager.Instance.SetLives(3);
         }
     }
 
