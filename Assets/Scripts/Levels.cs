@@ -6,7 +6,15 @@ public class Levels : MonoBehaviour
     public static Levels Instance;
 
     public GameObject rocketObstacle;
+
+    public GameObject saturnObstacle;
+    public float saturnMoveSpeed = 2f;
+    public float saturnMoveRange = 5f;
+
+    public GameObject ufoObstacle;
+
     public Transform basketTransform;
+
 
     private int lastScore = -1;
 
@@ -32,7 +40,7 @@ public class Levels : MonoBehaviour
     private IEnumerator HandleLevelChange(int score)
     {
         float rocketHeight = 2 + (score * 2f);
-        float fastSpeed = score * 1f; 
+        float fastSpeed = score * 1f;
 
         if (rocketObstacle != null)
             StartCoroutine(FlyRocketUpwardAndDown(rocketObstacle.transform, rocketHeight, fastSpeed));
@@ -63,7 +71,17 @@ public class Levels : MonoBehaviour
             basketTransform.Rotate(0f, -20f, 0f);
             basketTransform.position = pos;
 
-            
+            saturnObstacle.SetActive(true);
+            saturnMoveRange = 2f;
+            StartCoroutine(MoveSaturnLeftRight(saturnObstacle.transform, saturnMoveRange, saturnMoveSpeed));
+
+            LifeManager.Instance.SetLives(3);
+        }
+        else if (score == 5)
+        {
+            saturnObstacle.SetActive(false);
+            ufoObstacle.SetActive(true);
+            StartCoroutine(MoveUfoUpAndDown(ufoObstacle.transform, saturnMoveRange, saturnMoveSpeed));
             LifeManager.Instance.SetLives(3);
         }
     }
@@ -92,6 +110,57 @@ public class Levels : MonoBehaviour
                 rocketTransform.position = pos;
                 break;
             }
+            yield return null;
+        }
+    }
+
+    private IEnumerator MoveSaturnLeftRight(Transform saturn, float range, float speed)
+    {
+        Vector3 startPos = saturn.position;
+        bool movingRight = true;
+
+        while (saturn.gameObject.activeSelf)
+        {
+            float step = speed * Time.deltaTime;
+
+            if (movingRight)
+            {
+                saturn.position += Vector3.right * step;
+                if (saturn.position.x >= startPos.x + range)
+                    movingRight = false;
+            }
+            else
+            {
+                saturn.position -= Vector3.right * step;
+                if (saturn.position.x <= startPos.x - range)
+                    movingRight = true;
+            }
+
+            yield return null;
+        }
+    }
+    private IEnumerator MoveUfoUpAndDown(Transform ufoTransform, float range, float speed)
+    {
+        Vector3 startPos = ufoTransform.position;
+        bool movingUp = true;
+
+        while (ufoTransform.gameObject.activeSelf)
+        {
+            float step = speed * Time.deltaTime;
+
+            if (movingUp)
+            {
+                ufoTransform.position += Vector3.up * step;
+                if (ufoTransform.position.y >= startPos.y + range)
+                    movingUp = false;
+            }
+            else
+            {
+                ufoTransform.position -= Vector3.up * step;
+                if (ufoTransform.position.y <= startPos.y - range)
+                    movingUp = true;
+            }
+
             yield return null;
         }
     }
