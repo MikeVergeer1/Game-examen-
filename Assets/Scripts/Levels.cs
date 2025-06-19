@@ -8,6 +8,8 @@ public class Levels : MonoBehaviour
 
     public GameObject saturnObstacle;
     public GameObject ufoObstacle;
+    public GameObject saturnObstacle;
+    public GameObject ufoObstacle;
 
     private int lastScore = -1;
 
@@ -27,13 +29,19 @@ public class Levels : MonoBehaviour
         if (score == lastScore) return;
         lastScore = score;
         StartCoroutine(HandleLevel(score));
+        StartCoroutine(HandleLevel(score));
     }
 
+    IEnumerator HandleLevel(int score)
     IEnumerator HandleLevel(int score)
     {
         float h = 2 + score * 2f;
         float s = score * 1f;
+        float h = 2 + score * 2f;
+        float s = score * 1f;
 
+        if (score >= 1)
+            MovementManager.Instance.LaunchRocket(h, s);
         if (score >= 1)
             MovementManager.Instance.LaunchRocket(h, s);
 

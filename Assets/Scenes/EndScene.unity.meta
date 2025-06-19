@@ -1,7 +1,13 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scenes/EndScene.unity.meta
 guid: d5cbcca32b2f17a478d5c86de73afc09
 DefaultImporter:
+========
+guid: a319854ad3b09154e933fb3f89f56bad
+NativeFormatImporter:
+>>>>>>>> fa747a377c6c9aec2f721dec95fdc473d5a7f97e:Assets/Materials/Materials/Satrun.mat.meta
   externalObjects: {}
+  mainObjectFileID: 2100000
   userData: 
   assetBundleName: 
   assetBundleVariant: 
