@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-//mainmenu.cs
+// mainmenu.cs
 // This script handles the main menu functionality, including starting the game and quitting the application.
 public class Mainmenu : MonoBehaviour
 {

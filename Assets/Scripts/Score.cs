@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-//score.cs
+// score.cs
 // This script manages the scoring system in the game, allowing players to score points by interacting with the player object.
 public class Score : MonoBehaviour
 {
@@ -28,8 +28,8 @@ public class Score : MonoBehaviour
         canScore = false;
         score++;
 
-        ballThower?.OnScored();                 // prevent life loss
-        Levels.Instance?.OnScoreChanged(score); // if you’re using Levels.cs
+        ballThower?.OnScored();
+        Levels.Instance?.OnScoreChanged(score);
 
         yield return new WaitForSeconds(2f);
         canScore = true;

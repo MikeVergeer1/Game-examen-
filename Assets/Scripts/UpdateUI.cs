@@ -9,6 +9,6 @@ public class UpdateUI : MonoBehaviour
 
     void Update()
     {
-        scoreText.text = "Level\n" + Score.score.ToString();
+        scoreText.text = "LeveL\n" + Score.score.ToString();
     }
 }

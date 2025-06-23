@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-//levels.cs
+// levels.cs
 // This script manages the game levels and handles the progression based on the player's score.
 public class Levels : MonoBehaviour
 {
@@ -49,7 +49,7 @@ public class Levels : MonoBehaviour
         else if (score == 3)
         {
             MovementManager.Instance.SetBasketOffset(new Vector3(-5f, 0f, 2f), 20f);
-            LifeManager.Instance.SetLives(4);
+            LifeManager.Instance.SetLives(5);
         }
         else if (score == 4)
         {
@@ -69,19 +69,19 @@ public class Levels : MonoBehaviour
         {
             ufoObstacle.SetActive(false);
             MovementManager.Instance.StartBasketBackOnly(8f, 2f);
-            LifeManager.Instance.SetLives(3);
+            LifeManager.Instance.SetLives(5);
         }
         else if (score == 7)
         {
             MovementManager.Instance.StopBasket();
             MovementManager.Instance.StartBasket(Vector3.up, 1f, 2f);
-            LifeManager.Instance.SetLives(3);
+            LifeManager.Instance.SetLives(5);
 
         }
         else if (score == 8)
         {
             MovementManager.Instance.StartBasket(Vector3.right, 3f, 2f);
-            LifeManager.Instance.SetLives(5);
+            LifeManager.Instance.SetLives(6);
         }
         else if (score == 9)
         {
