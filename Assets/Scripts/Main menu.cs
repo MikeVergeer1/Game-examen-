@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+//mainmenu.cs
+// This script handles the main menu functionality, including starting the game and quitting the application.
 public class Mainmenu : MonoBehaviour
 {
     public void StartGame()
@@ -13,11 +15,11 @@ public class Mainmenu : MonoBehaviour
     {
         Debug.Log("Game has been closed");
 
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-    #else
+#else
     Application.Quit();
-    #endif
+#endif
     }
 
 }

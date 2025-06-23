@@ -1,5 +1,7 @@
 using UnityEngine;
-
+//ballthower.cs
+// This script handles the ball throwing mechanics in the game, including picking up the ball, calculating the throw speed and angle, and resetting the ball after a throw or when it falls to the ground.
+// It also manages the ball's interaction with the environment, such as detecting collisions with the ground and resetting the ball's position and state after scoring or losing a life.
 public class BallThower : MonoBehaviour
 {
     public float MaxBallSpeed = 40;

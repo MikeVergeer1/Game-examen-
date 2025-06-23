@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+// LifeManager.cs
+// This script manages the player's lives in the game.
 public class LifeManager : MonoBehaviour
 {
     public static LifeManager Instance;

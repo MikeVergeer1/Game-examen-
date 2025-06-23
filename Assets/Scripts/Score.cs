@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
+//score.cs
+// This script manages the scoring system in the game, allowing players to score points by interacting with the player object.
 public class Score : MonoBehaviour
 {
     public static int score = 1;
